@@ -52,7 +52,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
+
 
 .box1, .box2, .box4, .box5{
     border-right:2px solid white;
@@ -65,6 +67,10 @@
 
 .box7, .box8{
     border-right:2px solid white;
+}
+.box.clear {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: transparent;
 }
 
 .btn{
@@ -88,3 +94,28 @@
 .win{
     background-color: rgba(0, 255, 0, 0.3);
 }
+
+/* Flash background color on win */
+.celebration {
+    animation: flash-bg 0.5s alternate infinite;
+}
+
+/* Flashing background keyframes */
+@keyframes flash-bg {
+    0% { background-color: #f39c12; }
+    50% { background-color: #8e44ad; }
+    100% { background-color: #3498db; }
+}
+
+/* Highlight winning boxes */
+.win {
+    background-color: green;
+    color: white;
+    animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+}
+

@@ -21,16 +21,21 @@ const winningPositions = [
 function initGame() {
     currentPlayer = "X";
     gameGrid = ["","","","","","","","",""];
-    //UI pr empty bhi karna padega boxes ko
+
     boxes.forEach((box, index) => {
-        box.innerText = "";
-        boxes[index].style.pointerEvents = "all";
-        //one more thing is missing, initialise box with css properties again
-        box.classList = `box box${index+1}`;
+        box.classList.add("clear");  // Apply the clear class
+        setTimeout(() => {
+            box.classList.remove("clear");  // Remove after a short delay
+            box.innerText = "";
+            boxes[index].style.pointerEvents = "all";
+            box.classList = `box box${index+1}`;
+        }, 500);  // Wait for the fade-out effect to finish
     });
+
     newGameBtn.classList.remove("active");
     gameInfo.innerText = `Current Player - ${currentPlayer}`;
 }
+
 
 initGame();
 
@@ -48,51 +53,62 @@ function checkGameOver() {
     let answer = "";
 
     winningPositions.forEach((position) => {
-        //all 3 boxes should be non-empty and exactly same in value
+        // all 3 boxes should be non-empty and exactly the same in value
         if( (gameGrid[position[0]] !== "" || gameGrid[position[1]] !== "" || gameGrid[position[2]] !== "") 
             && (gameGrid[position[0]] === gameGrid[position[1]] ) && (gameGrid[position[1]] === gameGrid[position[2]])) {
 
-                //check if winner is X
+                // check if the winner is X
                 if(gameGrid[position[0]] === "X") 
                     answer = "X";
                 else {
                     answer = "O";
-                } 
-                    
+                }
 
-                //disable pointer events
+                // Disable pointer events
                 boxes.forEach((box) => {
                     box.style.pointerEvents = "none";
-                })
+                });
 
-                //now we know X/O is a winner
+                // Highlight winning boxes
                 boxes[position[0]].classList.add("win");
                 boxes[position[1]].classList.add("win");
                 boxes[position[2]].classList.add("win");
+
+                // Add the emoji celebration
+                gameInfo.innerHTML = `Winner Player - ${answer} 🎉`;
+
+                // Trigger confetti
+                triggerCelebration();
             }
     });
 
-    //it means we have a winner
-    if(answer !== "" ) {
-        gameInfo.innerText = `Winner Player - ${answer}`;
+    // If we have a winner, show the new game button and stop further actions
+    if(answer !== "") {
         newGameBtn.classList.add("active");
         return;
     }
 
-    //We know, NO Winner Found, let's check whether there is tie
+    // Check for tie if no winner
     let fillCount = 0;
     gameGrid.forEach((box) => {
         if(box !== "" )
             fillCount++;
     });
 
-    //board is Filled, game is TIE
     if(fillCount === 9) {
-        gameInfo.innerText = "Game Tied !";
+        gameInfo.innerText = "Game Tied! 🤝";
         newGameBtn.classList.add("active");
+        // Optional: Add tie-specific effect, but no confetti.
+        return;
     }
-
 }
+
+
+// Simple confetti or celebration trigger
+function triggerCelebration() {
+    document.body.classList.add("celebration"); // Add a class to trigger celebration
+}
+
     
 
 function handleClick(index) {
@@ -115,5 +131,12 @@ boxes.forEach((box, index) => {
 
 newGameBtn.addEventListener("click", initGame);
 
+function triggerCelebration() {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
 
 
